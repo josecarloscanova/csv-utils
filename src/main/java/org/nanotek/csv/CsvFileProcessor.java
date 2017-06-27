@@ -7,6 +7,7 @@ import static org.nanotek.csv.FileConstants.DEFAULT_DIRECTORY;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.MappedByteBuffer;
@@ -50,6 +51,25 @@ public class CsvFileProcessor {
 		configureCsvProcessor(directory , fileName , charSet , bufferSize);
 	}
 	
+	public CsvFileProcessor(URI fileLocation )
+	{ 
+		String[] pathFileStr = getDirectoryFileLocation(fileLocation); 
+		configureCsvProcessor(pathFileStr[0] , pathFileStr[1] , DEFAULT_CHARSET , DEFAULT_BUFFER_SIZE);
+	}
+	
+	public CsvFileProcessor(URI fileLocation , String charSet , int bufferSize)
+	{ 
+		String[] pathFileStr = getDirectoryFileLocation(fileLocation); 
+		configureCsvProcessor(pathFileStr[0] , pathFileStr[1] , charSet , bufferSize);
+	}
+	
+	private String[] getDirectoryFileLocation(URI fileLocation) {
+		Path path = Paths.get(fileLocation);
+		String directory  = path.getParent().toString();
+		String fileName = path.toFile().getName();
+		return new String[]{directory , fileName};
+	}
+
 	private void configureCsvProcessor(String directory , String fileName , String charSet , int bufferSize)
 	{ 
 		this.defaultDirectory = directory;

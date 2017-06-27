@@ -1,4 +1,4 @@
-package org.nanotek.csv;
+package org.nanotek.apache_csv;
 
 import java.io.CharArrayReader;
 import java.io.File;
@@ -13,7 +13,9 @@ import java.util.List;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.nanotek.csv.CsvFileProcessor;
 
+@Deprecated
 public class CsvFileProcessorApacheCsv {
 
 	public static void main(String[] args)
@@ -21,7 +23,7 @@ public class CsvFileProcessorApacheCsv {
 		int size =0;
 		try {
 			FileChannel fileChannel = new RandomAccessFile(new File("c:/place"), "rw").getChannel();
-			CsvFileProcessor cfp = new CsvFileProcessor("release");
+			CsvFileProcessor cfp = new CsvFileProcessor("place");
 			CharBuffer cb = null;
 			CharArrayReader car;
 		CharsetEncoder cse = Charset.forName("UTF-8").newEncoder();

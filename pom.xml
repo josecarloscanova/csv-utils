@@ -12,12 +12,25 @@
 		<jmh.version>1.19</jmh.version>
 		<java.version>1.8</java.version>
 		<spf4j.version>8.1.5</spf4j.version>
+		<org.junit.version>4.12</org.junit.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${org.junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.nanotek</groupId>
 			<artifactId>core</artifactId>
+			<version>1.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.nanotek</groupId>
+			<artifactId>opencsv</artifactId>
 			<version>1.0</version>
 			<scope>compile</scope>
 		</dependency>
