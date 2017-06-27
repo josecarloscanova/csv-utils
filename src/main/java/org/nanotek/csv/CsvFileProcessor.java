@@ -4,7 +4,6 @@ import static org.nanotek.csv.FileConstants.DEFAULT_BUFFER_SIZE;
 import static org.nanotek.csv.FileConstants.DEFAULT_CHARSET;
 import static org.nanotek.csv.FileConstants.DEFAULT_DIRECTORY;
 
-import java.io.CharArrayReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -15,14 +14,8 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 
 public class CsvFileProcessor {
 
@@ -34,7 +27,7 @@ public class CsvFileProcessor {
 	private ByteBuffer byteBuffer;
 	private Charset currentCharSet; 
 	private CharsetDecoder decoder;
-	int current_position;
+	private int current_position;
 	
 	
 	public CsvFileProcessor(String fileName)
@@ -74,37 +67,46 @@ public class CsvFileProcessor {
 	}
 	
 	/** 
-	 * can be used to process and entire file... 
+	 * can be used to process an entire file... 
 	 * @return
 	 */
 	public CsvBuffer processFile()
 	{ 
-		return new CsvBuffer(createCharBuffer(bufferFromFile(verifyFileLocation())));
+		verifyAndInitialize();
+		return new CsvBuffer(createCharBuffer(byteBuffer));
 	}
 	
 	public CharBuffer readBuffer()
 	{ 
-		if(csvFile ==null){ 
-			verifyFileLocation();
-			byteBuffer = bufferFromFile(csvFile); 
-		}
+		verifyAndInitialize();
 		int len = Math.min(bufferSize, byteBuffer.remaining());
 		return readCharBuffer(len);
 	}
 	
+	private void verifyAndInitialize() {
+		if(csvFile ==null){ 
+			byteBuffer = verifyFileAndCreateBuffer();
+		}
+	}
+	
+	private ByteBuffer verifyFileAndCreateBuffer() {
+		verifyFileLocation();
+		return bufferFromFile(csvFile);
+	}
+
 	private CharBuffer readCharBuffer(int len) {
 		//TODO: create method to read last newline from the byte buffer.
 		byteBuffer.position(current_position + len);
 		int ba_buffer_position = readLastLineDelimiter(byteBuffer);
-		CharBuffer cb = null;
+		CharBuffer cb;
+		byte[] ba;
 		try {   
 				byteBuffer.position(current_position);
 			    if (byteBuffer.hasRemaining()){ 
 			    	int remain = ba_buffer_position - current_position;
 			    if (len > remain)
 			    	len = remain;
-				byte[] ba = new byte[len];
-				byteBuffer.position(current_position);
+				ba =  new byte[len];
 				byteBuffer.get(ba);
 				cb = decoder.decode(ByteBuffer.wrap(ba));
 				current_position = ba_buffer_position;
@@ -119,11 +121,15 @@ public class CsvFileProcessor {
 
 	private int readLastLineDelimiter(ByteBuffer bb) {
 		int counter = bb.position();
-		int position = counter;
 		char c = '\n';
-		do{ 
-			c = (char)bb.get(--counter);
-		}while(c != '\n');
+		try { 
+			do{ 
+				c = (char)bb.get(--counter);
+			}while(c != '\n');
+		}catch(IndexOutOfBoundsException e)
+		{
+			throw new RuntimeException ("Use processFile() instead");
+		}
 		return counter;
 	}
 
@@ -159,13 +165,4 @@ public class CsvFileProcessor {
         return cb;
 	}
 
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-	
-	
 }

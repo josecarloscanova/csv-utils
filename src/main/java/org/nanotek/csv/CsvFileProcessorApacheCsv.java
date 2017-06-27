@@ -1,7 +1,11 @@
 package org.nanotek.csv;
 
 import java.io.CharArrayReader;
+import java.io.File;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.List;
@@ -14,9 +18,10 @@ public class CsvFileProcessorApacheCsv {
 
 	public static void main(String[] args)
 	{ 
+		int size =0;
 		try {
-//			FileChannel fileChannel = new RandomAccessFile(new File("c:/place"), "rw").getChannel();
-			CsvFileProcessor cfp = new CsvFileProcessor("place");
+			FileChannel fileChannel = new RandomAccessFile(new File("c:/place"), "rw").getChannel();
+			CsvFileProcessor cfp = new CsvFileProcessor("release");
 			CharBuffer cb = null;
 			CharArrayReader car;
 		CharsetEncoder cse = Charset.forName("UTF-8").newEncoder();
@@ -25,17 +30,18 @@ public class CsvFileProcessorApacheCsv {
 			car = new CharArrayReader(cb.array());
 			final CSVParser parser = new CSVParser(car, CSVFormat.newFormat('\t'));
 			List<CSVRecord> csvr = parser.getRecords();
-			System.out.println("size of records in segment " + csvr.size());
-//			ByteBuffer buff = cse.encode(cb);
+			size += size > 0 && csvr.size() > 0 ? (csvr.size() -1): csvr.size() ;
+			ByteBuffer buff = cse.encode(cb);
 //			System.out.println("processed buffer " + ++counter);
-//			fileChannel.write(buff);
-//			cb.position(0);
+			fileChannel.write(buff);
+			cb.position(0);
 		}while(cb.hasRemaining());
 //		System.out.println("files size " + file_size);
 //		fileChannel.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("size of records in file " + size);
 	}
 	
 }
