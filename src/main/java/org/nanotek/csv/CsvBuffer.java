@@ -7,7 +7,6 @@ public class CsvBuffer implements Supplier<CharBuffer>{
 
 	private CharBuffer cb;
 	private int remaining;
-	private boolean hasRemaining; 
 	
 	public CsvBuffer (CharBuffer cb)
 	{ 
@@ -16,10 +15,6 @@ public class CsvBuffer implements Supplier<CharBuffer>{
 		else 
 			throw new RuntimeException("Invalid char buffer");
 		remaining = cb.remaining();
-		if (remaining == 0)
-			hasRemaining = false;
-		else 
-			hasRemaining = true;
 	}
 	
 	@Override
@@ -34,7 +29,7 @@ public class CsvBuffer implements Supplier<CharBuffer>{
 	
 	public boolean hasRemaining()
 	{ 
-		return hasRemaining;
+		return (remaining == 0)? false : true;
 	}
 	
 }
