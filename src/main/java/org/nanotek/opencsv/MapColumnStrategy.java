@@ -3,8 +3,6 @@ package org.nanotek.opencsv;
 import java.util.Map;
 
 import org.nanotek.Base;
-import org.nanotek.example.Place;
-import org.nanotek.example.PlaceCsvMapping;
 import org.nanotek.PostConstructorStrategy;
 
 import au.com.bytecode.opencsv.bean.ColumnPositionMappingStrategy;
@@ -44,10 +42,5 @@ implements PostConstructorStrategy<Map<String,Integer>> {
 		}
 		this.setColumnMapping(csvColumns);
 	}
-
 	
-	public static void main(String args[])
-	{ 
-		MapColumnStrategy<? , Place> mcs =  new PlaceCsvMapping().get();
-	}
 }

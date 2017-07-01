@@ -22,14 +22,9 @@ public class CsvBuffer implements Supplier<CharBuffer>{
 		return cb;
 	}
 
-	public int remaining()
+	public boolean empty()
 	{ 
-		return remaining;
-	}
-	
-	public boolean hasRemaining()
-	{ 
-		return (remaining == 0)? false : true;
+		return (remaining == 0)? true : false;
 	}
 	
 }

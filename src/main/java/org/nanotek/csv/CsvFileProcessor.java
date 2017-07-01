@@ -18,6 +18,10 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.spf4j.annotations.PerformanceMonitor;
+import org.spf4j.annotations.RecorderSourceInstance;
+import org.spf4j.jmx.JmxExport;
+
 public class CsvFileProcessor {
 
 	private String fileName;
@@ -65,9 +69,7 @@ public class CsvFileProcessor {
 	
 	private String[] getDirectoryFileLocation(URI fileLocation) {
 		Path path = Paths.get(fileLocation);
-		String directory  = path.getParent().toString();
-		String fileName = path.toFile().getName();
-		return new String[]{directory , fileName};
+		return new String[]{path.getParent().toString() , path.toFile().getName()};
 	}
 
 	private void configureCsvProcessor(String directory , String fileName , String charSet , int bufferSize)
@@ -96,11 +98,11 @@ public class CsvFileProcessor {
 		return new CsvBuffer(createCharBuffer(byteBuffer));
 	}
 	
-	public CharBuffer readBuffer()
+	public CsvBuffer readBuffer()
 	{ 
 		verifyAndInitialize();
 		int len = Math.min(bufferSize, byteBuffer.remaining());
-		return readCharBuffer(len);
+		return new CsvBuffer(readCharBuffer(len));
 	}
 	
 	private void verifyAndInitialize() {
@@ -123,13 +125,13 @@ public class CsvFileProcessor {
 		try {   
 				byteBuffer.position(current_position);
 			    if (byteBuffer.hasRemaining()){ 
-			    	int remain = ba_buffer_position - current_position;
-			    if (len > remain)
-			    	len = remain;
-				ba =  new byte[len];
-				byteBuffer.get(ba);
-				cb = decoder.decode(ByteBuffer.wrap(ba));
-				current_position = ba_buffer_position;
+				    int remain = ba_buffer_position - current_position;
+				    if (len > remain)
+				    	len = remain;
+					ba =  new byte[len];
+					byteBuffer.get(ba);
+					cb = decoder.decode(ByteBuffer.wrap(ba));
+					current_position = ba_buffer_position;
 			    }else { 
 			    	cb = CharBuffer.allocate(0);
 			    }

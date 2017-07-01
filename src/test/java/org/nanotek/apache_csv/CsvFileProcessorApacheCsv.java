@@ -13,7 +13,9 @@ import java.util.List;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.nanotek.csv.CsvBuffer;
 import org.nanotek.csv.CsvFileProcessor;
+import org.spf4j.jmx.Registry;
 
 @Deprecated
 public class CsvFileProcessorApacheCsv {
@@ -23,21 +25,22 @@ public class CsvFileProcessorApacheCsv {
 		int size =0;
 		try {
 			FileChannel fileChannel = new RandomAccessFile(new File("c:/place"), "rw").getChannel();
-			CsvFileProcessor cfp = new CsvFileProcessor("place");
-			CharBuffer cb = null;
+			CsvFileProcessor cfp = new CsvFileProcessor("release");
+			CsvBuffer csv = null;
 			CharArrayReader car;
-		CharsetEncoder cse = Charset.forName("UTF-8").newEncoder();
+			CharsetEncoder cse = Charset.forName("UTF-8").newEncoder();
 		do { 
-			cb = cfp.readBuffer();
-			car = new CharArrayReader(cb.array());
+			csv = cfp.readBuffer();
+			car = new CharArrayReader(csv.get().array());
 			final CSVParser parser = new CSVParser(car, CSVFormat.newFormat('\t'));
 			List<CSVRecord> csvr = parser.getRecords();
 			size += size > 0 && csvr.size() > 0 ? (csvr.size() -1): csvr.size() ;
-			ByteBuffer buff = cse.encode(cb);
+			ByteBuffer buff = cse.encode(csv.get());
 //			System.out.println("processed buffer " + ++counter);
+			System.out.println("buffer size " + csvr.size());
 			fileChannel.write(buff);
-			cb.position(0);
-		}while(cb.hasRemaining());
+			parser.close();
+		}while(!csv.empty());
 //		System.out.println("files size " + file_size);
 //		fileChannel.close();
 		} catch (Exception e) {

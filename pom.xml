@@ -11,7 +11,7 @@
 	<properties>
 		<jmh.version>1.19</jmh.version>
 		<java.version>1.8</java.version>
-		<spf4j.version>8.1.5</spf4j.version>
+		<spf4j.version>8.3.5</spf4j.version>
 		<org.junit.version>4.12</org.junit.version>
 	</properties>
 
@@ -44,6 +44,25 @@
 			<artifactId>spf4j-core</artifactId>
 			<version>${spf4j.version}</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.spf4j/spf4j-aspects -->
+		<dependency>
+			<groupId>org.spf4j</groupId>
+			<artifactId>spf4j-aspects</artifactId>
+			<version>${spf4j.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.spf4j/spf4j-jmh -->
+		<dependency>
+			<groupId>org.spf4j</groupId>
+			<artifactId>spf4j-jmh</artifactId>
+			<version>8.3.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.spf4j</groupId>
+			<artifactId>spf4j-junit</artifactId>
+			<version>${spf4j.version}</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.openjdk.jmh</groupId>
 			<artifactId>jmh-core</artifactId>
@@ -67,6 +86,22 @@
 					<compilerVersion>${java.version}</compilerVersion>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<properties>
+						<property>
+							<name>listener</name>
+							<value>org.spf4j.junit.Spf4jRunListener</value>
+						</property>
+						<property>
+							<name>spf4j.junit.sampleTimeMillis</name>
+							<value>5</value>
+						</property>
+					</properties>
 				</configuration>
 			</plugin>
 			<plugin>
