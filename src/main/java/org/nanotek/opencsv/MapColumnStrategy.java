@@ -1,10 +1,8 @@
 package org.nanotek.opencsv;
 
 import java.util.Map;
-
 import org.nanotek.Base;
 import org.nanotek.PostConstructorStrategy;
-
 import au.com.bytecode.opencsv.bean.ColumnPositionMappingStrategy;
 
 public class    MapColumnStrategy<T extends Map<String,Integer>, I extends Base<?>> 

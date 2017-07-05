@@ -17,6 +17,6 @@ import org.nanotek.Strategy;
 @FunctionalInterface
 public interface PostConstructorStrategy<T> extends Strategy<T>, PostConstructor<T> {
 
-	public void buildMapping();
+	void buildMapping();
 
 }

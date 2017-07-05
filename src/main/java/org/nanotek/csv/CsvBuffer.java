@@ -8,6 +8,12 @@ public class CsvBuffer implements Supplier<CharBuffer>{
 	private CharBuffer cb;
 	private int remaining;
 	
+	private CsvBuffer()
+	{ 
+		cb = CharBuffer.allocate(0);
+		remaining = cb.remaining();
+	}
+	
 	public CsvBuffer (CharBuffer cb)
 	{ 
 		if (cb!=null)
@@ -27,4 +33,8 @@ public class CsvBuffer implements Supplier<CharBuffer>{
 		return (remaining == 0)? true : false;
 	}
 	
+	public static CsvBuffer emptyCsvBuffer()
+	{ 
+		return new CsvBuffer();
+	}
 }

@@ -18,10 +18,6 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.spf4j.annotations.PerformanceMonitor;
-import org.spf4j.annotations.RecorderSourceInstance;
-import org.spf4j.jmx.JmxExport;
-
 public class CsvFileProcessor {
 
 	private String fileName;
@@ -116,7 +112,7 @@ public class CsvFileProcessor {
 		return bufferFromFile(csvFile);
 	}
 
-	private CharBuffer readCharBuffer(int len) {
+	private CharBuffer readCharBuffer(final int len) {
 		//TODO: create method to read last newline from the byte buffer.
 		byteBuffer.position(current_position + len);
 		int ba_buffer_position = readLastLineDelimiter(byteBuffer);
@@ -126,9 +122,8 @@ public class CsvFileProcessor {
 				byteBuffer.position(current_position);
 			    if (byteBuffer.hasRemaining()){ 
 				    int remain = ba_buffer_position - current_position;
-				    if (len > remain)
-				    	len = remain;
-					ba =  new byte[len];
+				    int ba_len =  (remain < len ) ? remain : len;
+					ba =  new byte[ba_len];
 					byteBuffer.get(ba);
 					cb = decoder.decode(ByteBuffer.wrap(ba));
 					current_position = ba_buffer_position;
@@ -157,7 +152,7 @@ public class CsvFileProcessor {
 
 	private File verifyFileLocation() {
 		Path path = Paths.get(this.defaultDirectory, this.fileName);
-		if ((csvFile  = path.toFile()) ==null)
+		if (!(csvFile  = path.toFile()).exists())
 		{ 
 			throw new RuntimeException("Not a valid file to process");
 		}
