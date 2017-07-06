@@ -1,6 +1,8 @@
 package org.nanotek.opencsv;
 
 import java.util.Map;
+import java.util.Map.Entry;
+
 import org.nanotek.Base;
 import org.nanotek.PostConstructorStrategy;
 import au.com.bytecode.opencsv.bean.ColumnPositionMappingStrategy;
@@ -29,16 +31,21 @@ implements PostConstructorStrategy<Map<String,Integer>> {
 		assert (baseMap !=null && baseMap.size() >=1);
 		String [] csvColumns = new String[baseMap.keySet().size()];
 		try {
-			for (String key : baseMap.keySet()){ 
-				Integer position = baseMap.get(key);
-				if (position !=null)
-					csvColumns[position] = key;
-			}
+			baseMap.entrySet().stream().filter(e -> checkPositionValid(e)).forEach(e ->csvColumns[e.getValue()] = e.getKey());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new MappingStrategyException (e);
 		}
 		this.setColumnMapping(csvColumns);
+	}
+
+	private boolean checkPositionValid(Entry<String, Integer> e) {
+		checkPositionUniqueness();
+		return e.getValue() !=null && e.getValue() >=0;
+	}
+
+	//Implement a validaiton on uniqueness of map element position.
+	private void checkPositionUniqueness() {
 	}
 	
 }
